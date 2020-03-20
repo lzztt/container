@@ -3,7 +3,7 @@
 ##
 ## used by linode instance in resuce mode
 ## to build a minimum debian testing system
-## bash build_base.sh p2.geekpush.com |& tee /tmp/build.log
+## bash build_base.sh <hostname> |& tee /tmp/build.log
 ##
 
 # take first argument, or master's hostname as hostname
@@ -14,24 +14,18 @@ DEV=/dev/sda
 DIST=testing
 PKGS=udev,locales,ifupdown,systemd-sysv,netbase,net-tools,cron,logrotate,procps,openssh-server,ntp
 
-
 rootfs=/mnt
 mirror=http://fremont.mirrors.linode.com/debian
+
+# keyring
+echo "deb $mirror testing main" > /etc/apt/sources.list
+apt update
+apt install -y --force-yes debian-archive-keyring debootstrap
 
 
 mount $DEV $rootfs
 
-# If debian-archive-keyring isn't installed, fetch GPG keys directly
-releasekeyring=/usr/share/keyrings/debian-archive-keyring.gpg
-if [ ! -f $releasekeyring ]; then
-    releasekeyring='archive-key.gpg'
-    gpgkeyname='archive-key-8'
-    wget https://ftp-master.debian.org/keys/$gpgkeyname.asc -O - --quiet \
-        | gpg --import --no-default-keyring --keyring=$releasekeyring
-fi
-
-debootstrap --variant=minbase --arch=amd64 --keyring=$releasekeyring --include=$PKGS $DIST $rootfs $mirror
-
+debootstrap --variant=minbase --arch=amd64 --include=$PKGS $DIST $rootfs $mirror
 
 echo $host > $rootfs/etc/hostname
 
@@ -69,14 +63,14 @@ allow-hotplug $nic
 iface $nic inet static
     address $ip
     gateway $gateway
-    up   ip addr add $private_ip/17 dev $nic label $nic:1
-    down ip addr del $private_ip/17 dev $nic label $nic:1
+#    up   ip addr add $private_ip/17 dev $nic label $nic:1
+#    down ip addr del $private_ip/17 dev $nic label $nic:1
 EOF
 
 ## root password
 password="$(dd if=/dev/urandom bs=16 count=1 2>/dev/null | base64)"
 echo "root:$password" | chroot $rootfs chpasswd
 echo "Root password is '$password', please change !"
-echo "Please also varify NIC IP addresses"
+echo "Please also verify NIC IP addresses"
 
 umount $rootfs
