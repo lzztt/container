@@ -27,7 +27,7 @@ NIC_NAME=enp0s3
 
 ## keyring
 echo "deb $MIRROR testing main" > /etc/apt/sources.list
-apt update || echo 'Ignore error from apt update.'
+apt update
 apt install -y --force-yes debian-archive-keyring debootstrap
 
 
