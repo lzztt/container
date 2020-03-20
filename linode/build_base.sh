@@ -17,7 +17,7 @@ PKGS=udev,locales,ifupdown,systemd-sysv,netbase,net-tools,cron,logrotate,procps,
 rootfs=/mnt
 mirror=http://fremont.mirrors.linode.com/debian
 
-# keyring
+## keyring
 echo "deb $mirror testing main" > /etc/apt/sources.list
 apt update
 apt install -y --force-yes debian-archive-keyring debootstrap
