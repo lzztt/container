@@ -8,7 +8,7 @@
 
 # take first argument, or master's hostname as hostname
 host="${1:-`hostname`}"
-private_ip=""
+private_ip="$2"
 
 DEV=/dev/sda
 DIST=testing
@@ -21,7 +21,16 @@ mirror=http://fremont.mirrors.linode.com/debian
 
 mount $DEV $rootfs
 
-debootstrap --variant=minbase --arch=amd64 --include=$PKGS $DIST $rootfs $mirror
+# If debian-archive-keyring isn't installed, fetch GPG keys directly
+releasekeyring=/usr/share/keyrings/debian-archive-keyring.gpg
+if [ ! -f $releasekeyring ]; then
+    releasekeyring='archive-key.gpg'
+    gpgkeyname='archive-key-8'
+    wget https://ftp-master.debian.org/keys/$gpgkeyname.asc -O - --quiet \
+        | gpg --import --no-default-keyring --keyring=$releasekeyring
+fi
+
+debootstrap --variant=minbase --arch=amd64 --keyring=$releasekeyring --include=$PKGS $DIST $rootfs $mirror
 
 
 echo $host > $rootfs/etc/hostname
