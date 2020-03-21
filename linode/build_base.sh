@@ -10,7 +10,7 @@ set -eu
 
 error_exit () { echo "Error: $1"; exit 1; }
 
-[ "$#" -eq 2 ] || error_exit "Usage: $0 <hostname> <private_ip> <client_ip>"
+[ "$#" -eq 3 ] || error_exit "Usage: $0 <hostname> <private_ip> <client_ip>"
 
 host=$1
 private_ip=$2
@@ -50,7 +50,7 @@ chroot $ROOTFS update-locale LANG=en_US.UTF-8
 
 ## timezone
 cat /etc/timezone
-# unlink $ROOTFS/etc/localtime
+unlink $ROOTFS/etc/localtime
 echo 'America/Los_Angeles' > $ROOTFS/etc/timezone
 chroot $ROOTFS dpkg-reconfigure -f noninteractive tzdata
 
@@ -85,7 +85,7 @@ EOF
 
 
 ## SSH
-echo 'PermitRootLogin without-password' >> $ROOTFS/etc/ssh/sshd_config
+echo 'PermitRootLogin prohibit-password' >> $ROOTFS/etc/ssh/sshd_config
 mkdir $ROOTFS/root/.ssh
 echo $PUB_KEY > $ROOTFS/root/.ssh/authorized_keys
 chown -R 0:0 $ROOTFS/root/.ssh
@@ -113,7 +113,7 @@ chmod 755 $ROOTFS/etc/network/if-pre-up.d/iptables
 
 
 ## root password
-password="$(dd if=/dev/urandom bs=16 count=1 2>/dev/null | base64)"
+password="$(dd if=/dev/urandom bs=24 count=1 2>/dev/null | base64)"
 echo "root:$password" | chroot $ROOTFS chpasswd
 echo "Root password is '$password', please change !"
 echo "Please also verify NIC IP addresses"
