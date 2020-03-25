@@ -28,7 +28,7 @@ ExecStartPre=/home/app/nginx/sbin/nginx -t
 ExecStart=/home/app/nginx/sbin/nginx
 ExecReload=/home/app/nginx/sbin/nginx -s reload
 ExecStop=/bin/kill -s QUIT $MAINPID
-PrivateTmp=true
+PrivateTmp=false
 
 [Install]
 WantedBy=multi-user.target

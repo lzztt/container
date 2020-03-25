@@ -24,7 +24,7 @@ cp -pr sapi/fpm/init.d.php-fpm $APPDIR/sbin/
 chmod 755 $APPDIR/sbin/init.d.php-fpm
 
 cp -pr sapi/fpm/php-fpm.service $APPDIR/sbin/
-sed -i.orig -e 's!var/run!run!' -e 's/ProtectHome/#ProtectHome/' /home/app/$edge/sbin/php-fpm.service
+sed -i.orig -e 's!var/run!run!' -e 's/ProtectHome/#ProtectHome/' -e 's/PrivateTmp=true/PrivateTmp=false/' /home/app/$edge/sbin/php-fpm.service
 
 cd ext
 export PATH=$APPDIR/bin/:$PATH

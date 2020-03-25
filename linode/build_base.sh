@@ -109,7 +109,7 @@ cat <<EOF > $ROOTFS/etc/network/if-pre-up.d/iptables
 #!/bin/sh
 /sbin/iptables-restore < /etc/iptables.rules
 EOF
-chmod 755 $ROOTFS/etc/network/if-pre-up.d/iptables
+chmod +x $ROOTFS/etc/network/if-pre-up.d/iptables
 
 
 ## root password
