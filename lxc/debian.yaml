@@ -1,5 +1,9 @@
+# wget https://raw.githubusercontent.com/lxc/lxc-ci/master/images/debian.yaml
 image:
-  distribution: "debian"
+  distribution: debian
+  release: bullseye
+  architecture: amd64
+  variant: default
 
 source:
   downloader: debootstrap
@@ -948,9 +952,8 @@ packages:
     - locales
     - netbase
     - net-tools
-    - openssh-client
-    - vim
     action: install
+    early: true
 
   - packages:
     - cloud-init
