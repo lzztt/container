@@ -25,5 +25,5 @@ libmagickcore-6.q16-6 \
 libmagickwand-6.q16-6 \
 libmagickcore-dev \
 libmagickwand-dev \
-libgeoip1 \
-libgeoip-dev
+libmaxminddb0 \
+libmaxminddb-dev

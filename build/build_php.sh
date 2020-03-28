@@ -27,8 +27,8 @@ cp -pr sapi/fpm/php-fpm.service $APPDIR/sbin/
 sed -i.orig -e 's!var/run!run!' -e 's/ProtectHome/#ProtectHome/' -e 's/PrivateTmp=true/PrivateTmp=false/' /home/app/$edge/sbin/php-fpm.service
 
 cd ext
-export PATH=$APPDIR/bin/:$PATH
-for i in geoip imagick; do
+export PATH=$APPDIR/bin:$PATH
+for i in maxminddb imagick; do
     cd $i
     phpize 
     ./configure 
