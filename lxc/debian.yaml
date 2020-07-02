@@ -834,6 +834,9 @@ files:
 - path: /etc/machine-id
   generator: dump
 
+- path: /var/lib/dbus/machine-id
+  generator: remove
+
 - path: /etc/network/interfaces
   generator: dump
   content: |-
@@ -847,7 +850,7 @@ files:
     auto eth0
     iface eth0 inet dhcp
 
-    source /etc/network/interfaces.d/*.cfg
+    source /etc/network/interfaces.d/*
   types:
   - container
 
@@ -864,7 +867,7 @@ files:
     auto enp5s0
     iface enp5s0 inet dhcp
 
-    source /etc/network/interfaces.d/*.cfg
+    source /etc/network/interfaces.d/*
   types:
   - vm
   releases:
@@ -886,7 +889,7 @@ files:
     auto eth0
     iface eth0 inet dhcp
 
-    source /etc/network/interfaces.d/*.cfg
+    source /etc/network/interfaces.d/*
   types:
   - vm
   releases:
