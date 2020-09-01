@@ -1,7 +1,7 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 cd /home/src
-edge=`ls -ld php-* | grep ^d | tail -n 1 | awk '{print $9}'`
+edge=`ls -d php-* | tail -n 1`
 cd $edge
 
 make clean
@@ -30,8 +30,8 @@ cd ext
 export PATH=$APPDIR/bin:$PATH
 for i in maxminddb imagick; do
     cd $i
-    phpize 
-    ./configure 
+    phpize
+    ./configure
     make
     make install
     cd ..

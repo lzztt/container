@@ -1,7 +1,7 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 cd /home/src
-edge=`ls -lrtd nginx-* | grep ^d | tail -n 1 | awk '{print $9}'`
+edge=`ls -d nginx-* | tail -n 1`
 cd $edge
 
 make clean

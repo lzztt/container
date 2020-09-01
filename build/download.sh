@@ -1,8 +1,8 @@
 SRC=/home/src
-NGINX=nginx-1.17.9
-PHP=php-7.4.4
+NGINX=nginx-1.19.2
+PHP=php-7.4.9
 IMAGICK=imagick-3.4.4
-MAXMINDDB=1.6.0
+MAXMINDDB=1.7.0
 
 wget -qO- https://nginx.org/download/$NGINX.tar.gz | tar -zx -C $SRC
 cd $SRC/$NGINX
