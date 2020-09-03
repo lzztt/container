@@ -1,17 +1,24 @@
+set -e
+
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 cd /home/src
 edge=`ls -d nginx-* | tail -n 1`
 cd $edge
 
-make clean
+make clean || echo
 
 export CFLAGS='-O2'
 export CXXFLAGS='-O2'
 
 APPDIR=/home/app/$edge
 
-./configure --prefix=$APPDIR --user=web --group=web  --with-cc-opt='-O2' `grep -v '^#' $DIR/nginx_without_module.conf | tr '\n' ' '` `grep -v '^#' $DIR/nginx_with_module.conf | tr '\n' ' '`
+./configure \
+--prefix=$APPDIR \
+--user=web \
+--group=web \
+--with-cc-opt='-O2' \
+`awk '/^--/{print $1}' $DIR/nginx_with*_module.conf`
 
 nproc=$(grep -c ^processor /proc/cpuinfo)
 make -j $nproc && make install
