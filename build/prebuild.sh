@@ -1,3 +1,5 @@
+set -e
+
 if [[ `grep -c ^web: /etc/passwd` == 0 ]]; then
     addgroup --gid 1000 web;
     adduser --uid 1000 --gid 1000 --disabled-password --gecos '' web;
@@ -21,9 +23,11 @@ libargon2-1 \
 libargon2-dev \
 libcurl4 \
 libcurl4-openssl-dev \
-libmagickcore-6.q16-6 \
-libmagickwand-6.q16-6 \
-libmagickcore-dev \
-libmagickwand-dev \
+libfreetype-dev \
+libfreetype6 \
+libjpeg62-turbo-dev
+libjpeg62-turbo \
+libpng-dev \
+libpng16-16 \
 libmaxminddb0 \
 libmaxminddb-dev

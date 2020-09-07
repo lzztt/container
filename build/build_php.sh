@@ -3,7 +3,7 @@ set -e
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 cd /home/src
-edge=`ls -d php-* | tail -n 1`
+edge=`ls -dt php-*[0-9] | head -n 1`
 cd $edge
 
 make clean || echo
@@ -36,7 +36,7 @@ sed -i.orig -e 's!var/run!run!' -e "s/$edge/php/g" -e 's/PrivateTmp=true/Private
 
 cd ext
 export PATH=$APPDIR/bin:$PATH
-for i in maxminddb imagick; do
+for i in maxminddb; do
     cd $i
     phpize
     ./configure

@@ -3,7 +3,7 @@ set -e
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 cd /home/src
-edge=`ls -d nginx-* | tail -n 1`
+edge=`ls -dt nginx-*[0-9] | head -n 1`
 cd $edge
 
 make clean || echo

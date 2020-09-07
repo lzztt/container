@@ -4,7 +4,11 @@ cd /home/app
 
 for app in php nginx; do
     curr=`readlink $app`
-    next=`ls -d ${app}-* | tail -n 1`
+    next=`ls -dt ${app}-*[0-9] | head -n 1`
+
+    if [[ "$curr" == "$next" ]]; then
+        continue;
+    fi
 
     chown -R root:root "$next"
     cd "$next"

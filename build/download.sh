@@ -1,7 +1,8 @@
+set -e
+
 SRC=/home/src
 NGINX=nginx-1.19.2
-PHP=php-7.4.9
-IMAGICK=imagick-3.4.4
+PHP=php-8.0.0
 MAXMINDDB=1.7.0
 
 wget -qO- https://nginx.org/download/$NGINX.tar.gz | tar -zx -C $SRC
@@ -19,6 +20,5 @@ sed -i 's!nginx\[5\] = "\\x84\\xaa\\x63\\x55\\xe7"!nginx\[4\] = "\\x83\\xa3\\xdf
 
 wget -qO- https://www.php.net/distributions/$PHP.tar.gz | tar -zx -C $SRC
 cd $SRC/$PHP/ext
-wget -qO- https://pecl.php.net/get/$IMAGICK.tgz | tar -zx && mv $IMAGICK imagick
 wget -qO- https://github.com/maxmind/MaxMind-DB-Reader-php/archive/v$MAXMINDDB.tar.gz | tar -zx && mv MaxMind-DB-Reader-php-$MAXMINDDB/ext maxminddb
 
