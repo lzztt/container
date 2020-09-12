@@ -36,10 +36,10 @@ sed -i.orig -e 's!var/run!run!' -e "s/$edge/php/g" -e 's/PrivateTmp=true/Private
 
 cd ext
 export PATH=$APPDIR/bin:$PATH
-for i in maxminddb; do
+for i in maxminddb redis; do
     cd $i
     phpize
-    ./configure
+    ./configure `[ "$i" = "redis" ] && echo '--disable-redis-session --disable-redis-json'`
     make
     make install
     cd ..
