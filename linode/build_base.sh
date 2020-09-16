@@ -20,7 +20,7 @@ PUB_KEY='from="'$client_ip'" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBFSLv/beZgZHt3
 
 DEV=/dev/sda
 DIST=testing
-PKGS=udev,locales,ifupdown,systemd-sysv,netbase,net-tools,cron,logrotate,procps,openssh-server,ntp,iptables
+PKGS=udev,locales,ifupdown,systemd-sysv,netbase,net-tools,cron,logrotate,procps,openssh-server,chrony,nftables
 
 ROOTFS=/mnt
 MIRROR=http://fremont.mirrors.linode.com/debian
@@ -91,26 +91,18 @@ echo $PUB_KEY > $ROOTFS/root/.ssh/authorized_keys
 chown -R 0:0 $ROOTFS/root/.ssh
 chmod 700 $ROOTFS/root/.ssh
 
-## iptables
-cat <<EOF > $ROOTFS/etc/iptables.rules
-*filter
-:INPUT DROP [0:0]
-:FORWARD DROP [0:0]
-:OUTPUT ACCEPT [0:0]
--A INPUT -i lo -j ACCEPT
--A INPUT -p icmp -j ACCEPT
--A INPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
--A INPUT -s $client_ip/32 -p tcp -m tcp --dport 22 -j ACCEPT
--A OUTPUT -o lo -j ACCEPT
-COMMIT
+## nftables
+cat <<EOF > $ROOTFS/etc/nftables.conf
+add table ip filter
+add chain ip filter INPUT { type filter hook input priority 0; policy drop; }
+add chain ip filter FORWARD { type filter hook forward priority 0; policy drop; }
+add chain ip filter OUTPUT { type filter hook output priority 0; policy accept; }
+add rule ip filter INPUT ip protocol icmp counter accept
+add rule ip filter INPUT iifname "lo" counter accept
+add rule ip filter INPUT ct state related,established counter accept
+add rule ip filter INPUT tcp dport 22 counter accept
 EOF
-
-cat <<EOF > $ROOTFS/etc/network/if-pre-up.d/iptables
-#!/bin/sh
-/sbin/iptables-restore < /etc/iptables.rules
-EOF
-chmod +x $ROOTFS/etc/network/if-pre-up.d/iptables
-
+chroot $ROOTFS systemctl enable nftables
 
 ## root password
 password="$(dd if=/dev/urandom bs=24 count=1 2>/dev/null | base64)"
