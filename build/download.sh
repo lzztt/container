@@ -1,7 +1,7 @@
 set -e
 
 SRC=/home/src
-NGINX=nginx-1.19.5
+NGINX=nginx-1.19.6
 PHP=php-8.0.0
 MAXMINDDB=1.8.0
 REDIS=redis-5.3.2
