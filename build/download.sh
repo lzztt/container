@@ -2,10 +2,10 @@ set -e
 
 SRC=/home/src
 NGINX=nginx-1.19.6
-PHP=php-8.0.0
-MAXMINDDB=1.8.0
+PHP=php-8.0.1
+MAXMINDDB=1.9.0
 REDIS=redis-5.3.2
-XDEBUG=xdebug-3.0.1
+XDEBUG=xdebug-3.0.2
 
 wget -qO- https://nginx.org/download/$NGINX.tar.gz | tar -zx -C $SRC
 cd $SRC/$NGINX
