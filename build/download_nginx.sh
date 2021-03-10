@@ -1,7 +1,7 @@
 set -e
 
 SRC=/home/src
-NGINX=nginx-1.19.6
+NGINX=nginx-1.19.8
 
 wget -qO- https://nginx.org/download/$NGINX.tar.gz | tar -zx -C $SRC
 cd $SRC/$NGINX
