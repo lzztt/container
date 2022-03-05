@@ -1,0 +1,49 @@
+diff --git a/config_space/hooks/partition.GRUB_CLOUD_AMD64 b/config_space/hooks/partition.GRUB_CLOUD_AMD64
+index 2ed97e9..3d2ea80 100755
+--- a/config_space/hooks/partition.GRUB_CLOUD_AMD64
++++ b/config_space/hooks/partition.GRUB_CLOUD_AMD64
+@@ -5,7 +5,7 @@ touch $LOGDIR/skip.partition
+ set -- $disklist
+ device=/dev/$1
+ device_root="${device}p1"
+-device_efi="${device}p15"
++device_efi="${device}p9"
+ 
+ wait_for_device() {
+   for s in $(seq 10); do
+@@ -21,9 +21,9 @@ label: gpt
+ unit: sectors
+ 
+ # BIOS boot
+-p14 : start=2048, size=6144, type=21686148-6449-6E6F-744E-656564454649
++p8 : start=2048, size=6144, type=21686148-6449-6E6F-744E-656564454649
+ # EFI system
+-p15 : start=8192, size=253952, type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B
++p9 : start=8192, size=253952, type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B
+ # Linux
+ p1 : start=262144, type=0FC63DAF-8483-4772-8E79-3D69D8477DE4
+ EOF
+diff --git a/src/debian_cloud_images/data/image.yaml b/src/debian_cloud_images/data/image.yaml
+index 36dbe59..b2e4fed 100644
+--- a/src/debian_cloud_images/data/image.yaml
++++ b/src/debian_cloud_images/data/image.yaml
+@@ -45,7 +45,7 @@ releases:
+   basename: bookworm
+   id: '12'
+   baseid: '12'
+-  fai_classes: [BOOKWORM, EXTRAS]
++  fai_classes: [BOOKWORM]
+   arch_supports_linux_image_cloud: [amd64, arm64]
+ - name: bookworm-backports
+   basename: bookworm-backports
+@@ -62,8 +62,8 @@ releases:
+ 
+ vendors:
+ - name: azure
+-  fai_classes: [AZURE, IPV6_DHCP]
+-  size: 30
++  fai_classes: [AZURE, DISABLE_IPV6]
++  size: 8
+   use_linux_image_cloud: true
+ - name: ec2
+   fai_classes: [EC2, IPV6_DHCP]
