@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# from: https://docs.microsoft.com/en-us/azure/virtual-machines/linux/no-agent
+
 attempts=1
 until [ "$attempts" -gt 5 ]
 do
