@@ -1,7 +1,93 @@
-diff --git a/config_space/hooks/partition.GRUB_CLOUD_AMD64 b/config_space/hooks/partition.GRUB_CLOUD_AMD64
+diff --git a/config_space/sid/files/root/provision_locale_tz.sh/AZURE b/config_space/sid/files/root/provision_locale_tz.sh/AZURE
+new file mode 100644
+index 0000000..d5bb2c1
+--- /dev/null
++++ b/config_space/sid/files/root/provision_locale_tz.sh/AZURE
+@@ -0,0 +1,38 @@
++#!/bin/bash
++
++uptime
++w
++last
++
++_lang='en_US.UTF-8'
++if [[ "$LANG" != $_lang && `cat /etc/locale.gen` != $_lang ]]; then
++	grep $_lang /etc/locale.gen | sed 's/^# *//' | sudo tee /etc/locale.gen
++	sudo locale-gen
++	echo $LANG
++	cat /etc/default/locale
++	cat /etc/locale.gen
++	locale
++	cat /etc/default/locale
++	localectl status
++	sudo update-locale LANG=$_lang LANGUAGE
++	localectl status
++	exit
++fi
++
++_tz='America/Los_Angeles'
++if [[ `cat /etc/timezone` != $_tz  && -f /usr/share/zoneinfo/$_tz ]]; then
++	sudo unlink /etc/localtime
++	echo $_tz | sudo tee /etc/timezone
++	sudo dpkg-reconfigure -f noninteractive tzdata
++fi
++
++sudo apt update && sudo apt upgrade
++
++if (( `systemctl list-units --state=running | grep -c uuidd` == 0 )); then
++	sudo apt install -y uuid-runtime
++	sudo systemctl start uuidd
++	sudo systemctl enable uuidd
++	sudo systemctl status uuidd
++fi
++
++sudo apt install -y bash-completion man-db manpages nftables rsync curl
+diff --git a/config_space/sid/files/root/provision_trim.sh/AZURE b/config_space/sid/files/root/provision_trim.sh/AZURE
+new file mode 100644
+index 0000000..a95aeca
+--- /dev/null
++++ b/config_space/sid/files/root/provision_trim.sh/AZURE
+@@ -0,0 +1,36 @@
++#!/bin/bash
++
++# ssh
++sudo rm /root/.ssh
++
++cp /etc/ssh/sshd_config /tmp/
++sudo sed -i 's/X11Forwarding yes/X11Forwarding no/' /etc/ssh/sshd_config
++
++grep AddressFamily /etc/ssh/sshd_config
++grep PermitRootLogin /etc/ssh/sshd_config
++cat <<EOF | sudo tee -a /etc/ssh/sshd_config
++
++AddressFamily inet
++PermitRootLogin no
++EOF
++
++diff /etc/ssh/sshd_config /tmp/sshd_config
++
++sudo ss -ntap | grep ssh
++sudo systemctl reload ssh
++sudo ss -ntap | grep ssh
++
++# services
++systemctl list-units --type=service --state=running
++
++for i in walinuxagent hv-kvp-daemon getty@tty1 serial-getty@ttyS0; do
++    sudo systemctl stop $i
++    sudo systemctl disable $i
++done
++
++systemctl list-units --type=service --state=running
++
++# packages
++sudo apt purge -y waagent iptables rsyslog hyperv-daemons
++sudo apt autoremove -y
++sudo rm -rf /var/lib/waagent /etc/waagent.conf /var/log/waagent.log
+diff --git a/config_space/sid/hooks/partition.GRUB_CLOUD_AMD64 b/config_space/sid/hooks/partition.GRUB_CLOUD_AMD64
 index 2ed97e9..3d2ea80 100755
---- a/config_space/hooks/partition.GRUB_CLOUD_AMD64
-+++ b/config_space/hooks/partition.GRUB_CLOUD_AMD64
+--- a/config_space/sid/hooks/partition.GRUB_CLOUD_AMD64
++++ b/config_space/sid/hooks/partition.GRUB_CLOUD_AMD64
 @@ -5,7 +5,7 @@ touch $LOGDIR/skip.partition
  set -- $disklist
  device=/dev/$1
@@ -23,10 +109,10 @@ index 2ed97e9..3d2ea80 100755
  # Linux
  p1 : start=262144, type=0FC63DAF-8483-4772-8E79-3D69D8477DE4
  EOF
-diff --git a/src/debian_cloud_images/data/image.yaml b/src/debian_cloud_images/data/image.yaml
-index 36dbe59..b2e4fed 100644
---- a/src/debian_cloud_images/data/image.yaml
-+++ b/src/debian_cloud_images/data/image.yaml
+diff --git a/src/debian_cloud_images/resources/image.yaml b/src/debian_cloud_images/resources/image.yaml
+index 36dbe59..1d499ff 100644
+--- a/src/debian_cloud_images/resources/image.yaml
++++ b/src/debian_cloud_images/resources/image.yaml
 @@ -45,7 +45,7 @@ releases:
    basename: bookworm
    id: '12'
@@ -43,7 +129,7 @@ index 36dbe59..b2e4fed 100644
 -  fai_classes: [AZURE, IPV6_DHCP]
 -  size: 30
 +  fai_classes: [AZURE, DISABLE_IPV6]
-+  size: 8
++  size: 2
    use_linux_image_cloud: true
  - name: ec2
    fai_classes: [EC2, IPV6_DHCP]
