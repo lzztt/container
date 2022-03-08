@@ -1,14 +1,37 @@
+diff --git a/config_space/sid/files/root/provision_extra.sh/AZURE b/config_space/sid/files/root/provision_extra.sh/AZURE
+new file mode 100644
+index 0000000..da60e12
+--- /dev/null
++++ b/config_space/sid/files/root/provision_extra.sh/AZURE
+@@ -0,0 +1,10 @@
++#!/bin/bash
++
++if (( `systemctl list-units --state=running | grep -c uuidd` == 0 )); then
++	sudo apt install -y uuid-runtime
++	sudo systemctl start uuidd
++	sudo systemctl enable uuidd
++	sudo systemctl status uuidd
++fi
++
++sudo apt install -y bash-completion man-db manpages nftables rsync curl vim
 diff --git a/config_space/sid/files/root/provision_locale_tz.sh/AZURE b/config_space/sid/files/root/provision_locale_tz.sh/AZURE
 new file mode 100644
-index 0000000..d5bb2c1
+index 0000000..815bd07
 --- /dev/null
 +++ b/config_space/sid/files/root/provision_locale_tz.sh/AZURE
-@@ -0,0 +1,38 @@
+@@ -0,0 +1,27 @@
 +#!/bin/bash
 +
 +uptime
 +w
 +last
++
++_tz='America/Los_Angeles'
++if [[ `cat /etc/timezone` != $_tz  && -f /usr/share/zoneinfo/$_tz ]]; then
++	sudo unlink /etc/localtime
++	echo $_tz | sudo tee /etc/timezone
++	sudo dpkg-reconfigure -f noninteractive tzdata
++fi
 +
 +_lang='en_US.UTF-8'
 +if [[ "$LANG" != $_lang && `cat /etc/locale.gen` != $_lang ]]; then
@@ -22,26 +45,38 @@ index 0000000..d5bb2c1
 +	localectl status
 +	sudo update-locale LANG=$_lang LANGUAGE
 +	localectl status
-+	exit
++	echo 'Please re-login to update locale'
 +fi
+diff --git a/config_space/sid/files/root/provision_nftables.sh/AZURE b/config_space/sid/files/root/provision_nftables.sh/AZURE
+new file mode 100644
+index 0000000..3c7d3ed
+--- /dev/null
++++ b/config_space/sid/files/root/provision_nftables.sh/AZURE
+@@ -0,0 +1,24 @@
++#!/bin/bash
 +
-+_tz='America/Los_Angeles'
-+if [[ `cat /etc/timezone` != $_tz  && -f /usr/share/zoneinfo/$_tz ]]; then
-+	sudo unlink /etc/localtime
-+	echo $_tz | sudo tee /etc/timezone
-+	sudo dpkg-reconfigure -f noninteractive tzdata
-+fi
++sudo apt install -y nftables
 +
-+sudo apt update && sudo apt upgrade
++IP=`echo $SSH_CLIENT | cut -d ' ' -f 1`
++cat <<EOF | sudo tee /etc/nftables.conf
++#!/usr/sbin/nft -f
 +
-+if (( `systemctl list-units --state=running | grep -c uuidd` == 0 )); then
-+	sudo apt install -y uuid-runtime
-+	sudo systemctl start uuidd
-+	sudo systemctl enable uuidd
-+	sudo systemctl status uuidd
-+fi
++flush ruleset
 +
-+sudo apt install -y bash-completion man-db manpages nftables rsync curl
++add table ip filter
++add chain ip filter INPUT { type filter hook input priority 0; policy drop; }
++add chain ip filter FORWARD { type filter hook forward priority 0; policy drop; }
++add chain ip filter OUTPUT { type filter hook output priority 0; policy accept; }
++add rule ip filter INPUT iifname "lo" counter accept
++add rule ip filter INPUT ct state related,established counter accept
++add rule ip filter INPUT ip saddr $IP tcp dport 22 counter accept
++EOF
++
++sudo systemctl enable nftables
++sudo systemctl start nftables
++systemctl status nftables
++
++sudo nft list ruleset
 diff --git a/config_space/sid/files/root/provision_trim.sh/AZURE b/config_space/sid/files/root/provision_trim.sh/AZURE
 new file mode 100644
 index 0000000..a95aeca
