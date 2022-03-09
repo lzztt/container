@@ -156,7 +156,7 @@ index 2ed97e9..3d2ea80 100755
  p1 : start=262144, type=0FC63DAF-8483-4772-8E79-3D69D8477DE4
  EOF
 diff --git a/src/debian_cloud_images/resources/image.yaml b/src/debian_cloud_images/resources/image.yaml
-index 36dbe59..1d499ff 100644
+index 36dbe59..aaf7901 100644
 --- a/src/debian_cloud_images/resources/image.yaml
 +++ b/src/debian_cloud_images/resources/image.yaml
 @@ -45,7 +45,7 @@ releases:
@@ -175,7 +175,7 @@ index 36dbe59..1d499ff 100644
 -  fai_classes: [AZURE, IPV6_DHCP]
 -  size: 30
 +  fai_classes: [AZURE, DISABLE_IPV6]
-+  size: 2
++  size: 3
    use_linux_image_cloud: true
  - name: ec2
    fai_classes: [EC2, IPV6_DHCP]
