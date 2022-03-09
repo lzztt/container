@@ -1,10 +1,12 @@
 diff --git a/config_space/sid/files/root/provision_extra.sh/AZURE b/config_space/sid/files/root/provision_extra.sh/AZURE
 new file mode 100644
-index 0000000..da60e12
+index 0000000..b6b6452
 --- /dev/null
 +++ b/config_space/sid/files/root/provision_extra.sh/AZURE
-@@ -0,0 +1,10 @@
+@@ -0,0 +1,12 @@
 +#!/bin/bash
++
++sudo apt update && sudo apt upgrade -y
 +
 +if (( `systemctl list-units --state=running | grep -c uuidd` == 0 )); then
 +	sudo apt install -y uuid-runtime
@@ -49,11 +51,13 @@ index 0000000..815bd07
 +fi
 diff --git a/config_space/sid/files/root/provision_nftables.sh/AZURE b/config_space/sid/files/root/provision_nftables.sh/AZURE
 new file mode 100644
-index 0000000..baebe3e
+index 0000000..e256dc9
 --- /dev/null
 +++ b/config_space/sid/files/root/provision_nftables.sh/AZURE
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,37 @@
 +#!/bin/bash
++
++sudo apt update && sudo apt upgrade -y
 +
 +sudo apt install -y nftables
 +
@@ -90,14 +94,14 @@ index 0000000..baebe3e
 +sudo nft list ruleset
 diff --git a/config_space/sid/files/root/provision_trim.sh/AZURE b/config_space/sid/files/root/provision_trim.sh/AZURE
 new file mode 100644
-index 0000000..a95aeca
+index 0000000..899cb59
 --- /dev/null
 +++ b/config_space/sid/files/root/provision_trim.sh/AZURE
 @@ -0,0 +1,36 @@
 +#!/bin/bash
 +
 +# ssh
-+sudo rm /root/.ssh
++sudo rm -rf /root/.ssh
 +
 +cp /etc/ssh/sshd_config /tmp/
 +sudo sed -i 's/X11Forwarding yes/X11Forwarding no/' /etc/ssh/sshd_config
