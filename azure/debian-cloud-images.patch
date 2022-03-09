@@ -49,10 +49,10 @@ index 0000000..815bd07
 +fi
 diff --git a/config_space/sid/files/root/provision_nftables.sh/AZURE b/config_space/sid/files/root/provision_nftables.sh/AZURE
 new file mode 100644
-index 0000000..3c7d3ed
+index 0000000..baebe3e
 --- /dev/null
 +++ b/config_space/sid/files/root/provision_nftables.sh/AZURE
-@@ -0,0 +1,24 @@
+@@ -0,0 +1,35 @@
 +#!/bin/bash
 +
 +sudo apt install -y nftables
@@ -71,6 +71,17 @@ index 0000000..3c7d3ed
 +add rule ip filter INPUT ct state related,established counter accept
 +add rule ip filter INPUT ip saddr $IP tcp dport 22 counter accept
 +EOF
++
++sudo nft flush ruleset
++sudo nft -f /etc/nftables.conf
++
++echo
++read -t 10 -p "To apply the changes, hit ENTER within 10 seconds"
++if [[ $? -gt 128 ]] ; then
++    echo -e "\nTimeout. Undo nftable changes"
++    sudo nft flush ruleset
++    exit 1
++fi
 +
 +sudo systemctl enable nftables
 +sudo systemctl start nftables
