@@ -2,7 +2,7 @@ set -e
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-cd /home/src
+cd /mnt/src
 edge=`ls -dt php-*[0-9] | head -n 1`
 cd $edge
 
