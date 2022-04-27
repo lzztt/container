@@ -37,6 +37,11 @@ sed -i.orig -e 's!var/run!run!' -e "s/$edge/php/g" -e 's/PrivateTmp=true/Private
 cd ext
 export PATH=$APPDIR/bin:$PATH
 for i in maxminddb redis xdebug; do
+    if [ ! -d $i ]; then
+        echo "skip $i"
+        continue
+    fi
+
     cd $i
     phpize
     if [ "$i" = "redis" ]; then
